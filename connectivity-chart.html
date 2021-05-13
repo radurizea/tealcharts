@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+
+        <!-- Styles -->
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #chartdiv {
+                width: 100%;
+                height: 80vh;
+            }
+        </style>
+
+        <!-- Resources -->
+        <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/plugins/forceDirected.js"></script>
+        <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+    </head>
+    <body>
+        <!-- Chart code -->
+        <script>
+            am4core.ready(function () {
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
+
+                var chart = am4core.create(
+                    'chartdiv',
+                    am4plugins_forceDirected.ForceDirectedTree
+                );
+
+                var networkSeries = chart.series.push(
+                    new am4plugins_forceDirected.ForceDirectedSeries()
+                );
+                networkSeries.dataFields.linkWith = 'linkWith';
+                networkSeries.dataFields.name = 'name';
+                networkSeries.dataFields.id = 'name';
+                networkSeries.dataFields.value = 'value';
+                // networkSeries.dataFields.children = 'children';
+
+                networkSeries.nodes.template.label.text = '{name}';
+                networkSeries.fontSize = 14;
+                networkSeries.linkWithStrength = 0;
+
+                var nodeTemplate = networkSeries.nodes.template;
+                nodeTemplate.tooltipText = '{name}';
+                nodeTemplate.fillOpacity = 1;
+                // nodeTemplate.label.hideOversized = true;
+                // nodeTemplate.label.truncate = true;
+
+                var linkTemplate = networkSeries.links.template;
+                linkTemplate.strokeWidth = 1;
+                var linkHoverState = linkTemplate.states.create('hover');
+                linkHoverState.properties.strokeOpacity = 1;
+                linkHoverState.properties.strokeWidth = 2;
+
+                nodeTemplate.events.on('over', function (event) {
+                    var dataItem = event.target.dataItem;
+                    dataItem.childLinks.each(function (link) {
+                        link.isHover = true;
+                    });
+                });
+
+                nodeTemplate.events.on('out', function (event) {
+                    var dataItem = event.target.dataItem;
+                    dataItem.childLinks.each(function (link) {
+                        link.isHover = false;
+                    });
+                });
+
+                var users = [];
+                var data = [];
+
+                var names = [
+                    'Amelia',
+                    'Arthur',
+                    'Ava',
+                    'Charlie',
+                    'Freddie',
+                    'George',
+                    'Grace',
+                    'Harry',
+                    'Isabella',
+                    'Isla',
+                    'Leo',
+                    'Mia',
+                    'Noah',
+                    'Oliver',
+                    'Olivia',
+                    'Oscar',
+                    'Sophia',
+                    'Theo',
+                ];
+
+                var sections = [
+                    'Charity',
+                    'Loyalty',
+                    'Energy',
+                    'Trust',
+                    'Action',
+                    'Inclusion',
+                    'Creativity',
+                    'Purpose',
+                    'Wisdom',
+                ];
+
+
+                names.forEach(function(name, index) {
+                    users.push({
+                        name: name,
+                        email: name.toLowerCase() + '@example.com'
+                    });
+                });
+
+                users.forEach(function(user, index) {
+                    // sections.forEach(function(section, sectionIndex) {
+
+                        var links = linkWith(index, users);
+                        
+                        data.push({
+                            name: user.name,
+                            email: user.email,
+                            value: links.length,
+                            linkWith: links
+                        });
+                    // });
+                });
+
+                // console.log(users);
+
+                function linkWith(index, users) {
+                    var numberOfConnections = Math.floor(Math.random() * 5) + 1;
+                    var linkWith = [];
+
+                    for (var i = 0; i < numberOfConnections; i++) {
+                        var randomConnection = Math.floor(Math.random() * users.length);
+                        linkWith.push(users[randomConnection].name);
+                    }
+
+                    return linkWith;
+                }
+
+                // console.log(data);
+
+                networkSeries.data = data;
+                
+            }); // end am4core.ready()
+        </script>
+
+        <!-- HTML -->
+        <div id="chartdiv"></div>
+    </body>
+</html>
