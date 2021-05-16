@@ -11,9 +11,20 @@
             body {
                 font-family: Arial, Helvetica, sans-serif;
             }
+            .container {
+                display: flex;
+            }
             #chartdiv {
                 width: 100%;
                 height: 100vh;
+            }
+            #toggleSections {
+                flex-grow: 1;
+                flex-shrink: 0;
+                padding: 2rem 0.5rem;
+            }
+            label {
+                cursor: pointer;
             }
         </style>
 
@@ -26,19 +37,118 @@
     <body>
         <!-- Chart code -->
         <script>
-            am4core.ready(function () {
-                // Themes begin
-                am4core.useTheme(am4themes_animated);
-                // Themes end
+            var chart;
+            var networkSeries;
+            var users = [];
+            var data = [];
+            var answers = [];
+            var selectedSections = [];
 
-                var chart = am4core.create(
+            var names = [
+                'Amelia',
+                'Arthur',
+                'Ava',
+                'Charlie',
+                'Freddie',
+                'George',
+                'Grace',
+                'Harry',
+                'Isabella',
+                'Isla',
+                'Leo',
+                'Mia',
+                'Noah',
+                'Oliver',
+                'Olivia',
+                'Oscar',
+                'Sophia',
+                'Theo',
+            ];
+
+            var sections = [
+                { name: 'Charity', answers: [] },
+                { name: 'Loyalty', answers: [] },
+                { name: 'Energy', answers: [] },
+                { name: 'Trust', answers: [] },
+                { name: 'Action', answers: [] },
+                { name: 'Inclusion', answers: [] },
+                { name: 'Creativity', answers: [] },
+                { name: 'Purpose', answers: [] },
+                { name: 'Wisdom', answers: [] },
+            ];
+
+            names.forEach(function (name, index) {
+                users.push({
+                    name: name,
+                    email: name.toLowerCase() + '@example.com',
+                });
+            });
+
+            users.forEach(function (user, index) {
+                // sections.forEach(function(section, sectionIndex) {
+
+                var links = linkWith(index, users);
+
+                data.push({
+                    name: user.name,
+                    email: user.email,
+                    value: links.length,
+                    linkWith: links,
+                });
+                // });
+            });
+
+            sections.forEach(function (section, sectionIndex) {
+                users.forEach(function (user, index) {
+                    var links = linkWith(index, users);
+                    section.answers.push({
+                        name: user.name,
+                        email: user.email,
+                        value: 0,
+                        linkWith: links,
+                    });
+                });
+            });
+
+            sections.forEach(function (section, sectionIndex) {
+                section.answers.forEach(function (answer) {
+                    section.answers.forEach(function (a) {
+                        if (a.linkWith.includes(answer.name)) {
+                            answer.value++;
+                        }
+                    });
+                });
+            });
+
+
+            function linkWith(index, users) {
+                var numberOfConnections = Math.floor(Math.random() * 10) + 1;
+                var linkWith = [];
+
+                for (var i = 0; i < numberOfConnections; i++) {
+                    var randomConnection = Math.floor(
+                        Math.random() * users.length
+                    );
+                    linkWith.push(users[randomConnection].name);
+                }
+
+                return linkWith;
+            }
+
+
+            selectedSections = sections.slice();
+
+
+            function drawChart(chart, networkSeries) {
+                chart = am4core.create(
                     'chartdiv',
                     am4plugins_forceDirected.ForceDirectedTree
                 );
 
-                var networkSeries = chart.series.push(
+                networkSeries = chart.series.push(
                     new am4plugins_forceDirected.ForceDirectedSeries()
                 );
+
                 networkSeries.dataFields.linkWith = 'linkWith';
                 networkSeries.dataFields.name = 'name';
                 networkSeries.dataFields.id = 'name';
@@ -59,102 +169,228 @@
                 linkTemplate.strokeWidth = 1;
                 var linkHoverState = linkTemplate.states.create('hover');
                 linkHoverState.properties.strokeOpacity = 1;
-                linkHoverState.properties.strokeWidth = 2;
+                linkHoverState.properties.strokeWidth = 4;
+
+                var linkHoverState = linkTemplate.states.create('invisible');
+                linkHoverState.properties.strokeOpacity = 0;
+                linkHoverState.properties.strokeWidth = 1;
+
+                var linkHoverState = linkTemplate.states.create('visible');
+                linkHoverState.properties.strokeOpacity = 1;
+                linkHoverState.properties.strokeWidth = 1;
 
                 nodeTemplate.events.on('over', function (event) {
                     var dataItem = event.target.dataItem;
-                    dataItem.childLinks.each(function (link) {
-                        link.isHover = true;
+                    networkSeries.nodes.each(function (node) {
+                        if (
+                            node.dataItem.dataContext.linkWith.includes(
+                                dataItem.dataContext.name
+                            )
+                        ) {
+                            node.dataItem.childLinks.each(function (link) {
+                                if (
+                                    link.dataItem.dataContext.name ===
+                                    dataItem.dataContext.name
+                                ) {
+                                    link.isHover = true;
+                                } else {
+                                    link.setState('invisible');
+                                }
+                            });
+                        } else {
+                            node.dataItem.childLinks.each(function (link) {
+                                link.setState('invisible');
+                            });
+                        }
                     });
                 });
 
                 nodeTemplate.events.on('out', function (event) {
-                    var dataItem = event.target.dataItem;
-                    dataItem.childLinks.each(function (link) {
+                    networkSeries.links.each(function (link) {
                         link.isHover = false;
+                        link.setState('visible');
                     });
                 });
 
-                var users = [];
-                var data = [];
+                networkSeries.data = sections[0].answers;
+            }
 
-                var names = [
-                    'Amelia',
-                    'Arthur',
-                    'Ava',
-                    'Charlie',
-                    'Freddie',
-                    'George',
-                    'Grace',
-                    'Harry',
-                    'Isabella',
-                    'Isla',
-                    'Leo',
-                    'Mia',
-                    'Noah',
-                    'Oliver',
-                    'Olivia',
-                    'Oscar',
-                    'Sophia',
-                    'Theo',
-                ];
+            am4core.ready(function () {
+                // Themes begin
+                am4core.useTheme(am4themes_animated);
+                // Themes end
 
-                var sections = [
-                    'Charity',
-                    'Loyalty',
-                    'Energy',
-                    'Trust',
-                    'Action',
-                    'Inclusion',
-                    'Creativity',
-                    'Purpose',
-                    'Wisdom',
-                ];
-
-
-                names.forEach(function(name, index) {
-                    users.push({
-                        name: name,
-                        email: name.toLowerCase() + '@example.com'
-                    });
-                });
-
-                users.forEach(function(user, index) {
-                    // sections.forEach(function(section, sectionIndex) {
-
-                        var links = linkWith(index, users);
-                        
-                        data.push({
-                            name: user.name,
-                            email: user.email,
-                            value: links.length,
-                            linkWith: links
-                        });
-                    // });
-                });
-
-                // console.log(users);
-
-                function linkWith(index, users) {
-                    var numberOfConnections = Math.floor(Math.random() * 5) + 1;
-                    var linkWith = [];
-
-                    for (var i = 0; i < numberOfConnections; i++) {
-                        var randomConnection = Math.floor(Math.random() * users.length);
-                        linkWith.push(users[randomConnection].name);
-                    }
-
-                    return linkWith;
-                }
-
-                // console.log(data);
-
-                networkSeries.data = data;
+                drawChart(chart, networkSeries);
+                
                 
             }); // end am4core.ready()
+
+            function toggleSection(e) {
+
+                var checked = e.target.checked;
+                var sectionName = e.target.name;
+                var sectionIndex = selectedSections.findIndex(function(section) {
+                    return section.name === sectionName;
+                });
+
+                if (!checked && sectionIndex >= 0) {
+                    selectedSections.splice(sectionIndex, 1);
+                } else if (checked && sectionIndex < 0) {
+                    selectedSections.push(sections.find(function(section){
+                        return section.name == e.target.name;
+                    }))
+                }        
+            }
+
+            function chartData() {
+                var data = [];
+
+                users.forEach(function(user) {
+                    var userData = {
+                        name: user.name,
+                        email: user.email,
+                        value: 0,
+                        linkWith: []
+                    };
+
+                    selectedSections.forEach(function(section){
+                        section.answers.forEach(function(answer){
+                            if (answer.name == user.name) {
+                                userData.linkWith = userData.linkWith.concat(answer.linkWith);
+                                userData.linkWith = userData.linkWith.filter(onlyUnique);
+                                userData.value = userData.linkWith.length;
+                            }
+                        });
+                    });
+
+                    data.push(userData);
+
+                });
+
+                return data;
+
+            }
+
+
+            function onlyUnique(value, index, self) {
+                return self.indexOf(value) === index;
+            }
+            
         </script>
 
         <!-- HTML -->
-        <div id="chartdiv"></div>
+        <div class="container">
+            <div id="chartdiv"></div>
+            <div id="toggleSections" style="display: none;">
+                <p>
+                    <label for="charity">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Charity"
+                            id="charity"
+                            onclick="toggleSection(event)"
+                        />
+                        Charity
+                    </label>
+                </p>
+                <p>
+                    <label for="loyalty">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Loyalty"
+                            id="loyalty"
+                            onclick="toggleSection(event)"
+                        />
+                        Loyalty
+                    </label>
+                </p>
+                <p>
+                    <label for="energy">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Energy"
+                            id="energy"
+                            onclick="toggleSection(event)"
+                        />
+                        Energy
+                    </label>
+                </p>
+                <p>
+                    <label for="trust">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Trust"
+                            id="trust"
+                            onclick="toggleSection(event)"
+                        />
+                        Trust
+                    </label>
+                </p>
+                <p>
+                    <label for="action">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Action"
+                            id="action"
+                            onclick="toggleSection(event)"
+                        />
+                        Action
+                    </label>
+                </p>
+                <p>
+                    <label for="inclusion">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Inclusion"
+                            id="inclusion"
+                            onclick="toggleSection(event)"
+                        />
+                        Inclusion
+                    </label>
+                </p>
+                <p>
+                    <label for="creativity">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Creativity"
+                            id="creativity"
+                            onclick="toggleSection(event)"
+                        />
+                        Creativity
+                    </label>
+                </p>
+                <p>
+                    <label for="purpose">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Purpose"
+                            id="purpose"
+                            onclick="toggleSection(event)"
+                        />
+                        Purpose
+                    </label>
+                </p>
+                <p>
+                    <label for="wisdom">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="Wisdom"
+                            id="wisdom"
+                            onclick="toggleSection(event)"
+                        />
+                        Wisdom
+                    </label>
+                </p>
+            </div>
+        </div>
     </body>
 </html>
