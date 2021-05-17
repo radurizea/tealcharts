@@ -331,30 +331,29 @@
                 linkHoverState.properties.strokeOpacity = 1;
                 linkHoverState.properties.strokeWidth = 4;
 
-                var linkHoverState = linkTemplate.states.create('invisible');
-                linkHoverState.properties.strokeOpacity = 0;
-                linkHoverState.properties.strokeWidth = 1;
+                var linkInvisibleState = linkTemplate.states.create('invisible');
+                linkInvisibleState.properties.strokeOpacity = 0;
+                linkInvisibleState.properties.strokeWidth = 1;
 
-                var linkHoverState = linkTemplate.states.create('visible');
-                linkHoverState.properties.strokeOpacity = 1;
-                linkHoverState.properties.strokeWidth = 1;
+                var linkVisibleState = linkTemplate.states.create('visible');
+                linkVisibleState.properties.strokeOpacity = 1;
+                linkVisibleState.properties.strokeWidth = 1;
+                linkVisibleState.transitionDuration = 0;
 
                 nodeTemplate.events.on('over', function (event) {
                     var dataItem = event.target.dataItem;
                     networkSeries.nodes.each(function (node) {
+                        var nodeIndex = node.dataItem.dataContext.linkWith.indexOf(dataItem.dataContext.name);
                         if (
-                            node.dataItem.dataContext.linkWith.includes(
-                                dataItem.dataContext.name
-                            )
+                           nodeIndex >= 0
                         ) {
-                            // console.log(node.dataItem.dataContext);
-                            // console.log(node.dataItem.childLinks);
                             node.dataItem.childLinks.each(function (link) {
                                 if (
                                     link.dataItem.dataContext.name ===
                                     dataItem.dataContext.name
                                 ) {
-                                    link.isHover = true;
+                                    link.setState('visible');
+                                    link.strokeWidth = 11 - nodeIndex;
                                 } else {
                                     link.setState('invisible');
                                 }
@@ -365,15 +364,13 @@
                                     node.dataItem.dataContext.name
                                 )
                             ) {
-                                // console.log(node.dataItem.dataContext.name);
-                                // console.log(dataItem.childLinks);
                                 dataItem.childLinks.each(function (link) {
-                                    // console.log({linkName: link.dataItem.dataContext.name, nodeName: node.dataItem.dataContext.name});
                                     if (
                                         link.dataItem.dataContext.name ===
                                         node.dataItem.dataContext.name
                                     ) {
-                                        link.isHover = true;
+                                        link.setState('visible');
+                                        link.strokeWidth = 11 - nodeIndex;
                                     }
                                 });
                             }
@@ -389,6 +386,7 @@
                     networkSeries.links.each(function (link) {
                         link.isHover = false;
                         link.setState('visible');
+                        link.strokeWidth = 1;
                     });
                 });
 
