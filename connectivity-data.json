@@ -2,43 +2,37 @@
     {
         "name": "Amelia",
         "email": "amelia@example.com",
-        "value": 5,
+        "value": 3,
         "linkWith": [
-            "Isla",
             "Leo",
+            "George",
+            "Theo",
             "Grace",
-            "Charlie",
-            "Harry",
-            "Isla",
-            "Freddie",
-            "Arthur",
-            "Charlie"
+            "Oliver",
+            "Isabella",
+            "Sophia"
         ]
     },
     {
         "name": "Arthur",
         "email": "arthur@example.com",
-        "value": 8,
+        "value": 4,
         "linkWith": [
-            "Olivia",
             "Freddie",
-            "Theo",
-            "Freddie",
-            "Noah",
-            "Charlie",
             "Grace",
-            "Arthur",
+            "Oliver",
             "Noah"
         ]
     },
     {
         "name": "Ava",
         "email": "ava@example.com",
-        "value": 6,
+        "value": 5,
         "linkWith": [
-            "Oscar",
-            "Grace",
-            "Mia"
+            "Charlie",
+            "Olivia",
+            "Amelia",
+            "Oscar"
         ]
     },
     {
@@ -46,188 +40,174 @@
         "email": "charlie@example.com",
         "value": 7,
         "linkWith": [
-            "Noah",
-            "Arthur",
-            "Arthur",
-            "Leo"
+            "Isla",
+            "Noah"
         ]
     },
     {
         "name": "Freddie",
         "email": "freddie@example.com",
-        "value": 5,
+        "value": 4,
         "linkWith": [
-            "Mia",
-            "Freddie",
-            "Sophia",
-            "Sophia"
+            "Olivia",
+            "Isla",
+            "Ava"
         ]
     },
     {
         "name": "George",
         "email": "george@example.com",
-        "value": 0,
+        "value": 7,
         "linkWith": [
             "Harry",
-            "Ava"
+            "Isabella",
+            "Arthur",
+            "Mia",
+            "Freddie"
         ]
     },
     {
         "name": "Grace",
         "email": "grace@example.com",
-        "value": 6,
+        "value": 5,
         "linkWith": [
-            "Leo",
-            "Leo",
-            "Oscar",
-            "Isla",
-            "Oliver",
-            "Charlie",
             "Mia",
-            "Ava"
+            "Charlie",
+            "Isabella",
+            "Harry",
+            "George",
+            "Ava",
+            "Isla"
         ]
     },
     {
         "name": "Harry",
         "email": "harry@example.com",
-        "value": 7,
+        "value": 5,
         "linkWith": [
-            "Harry",
-            "Harry",
-            "Leo",
-            "Theo",
+            "Isla",
             "Isabella",
-            "Olivia",
-            "Charlie",
-            "Oscar"
+            "Oscar",
+            "George",
+            "Leo",
+            "Mia",
+            "Noah"
         ]
     },
     {
         "name": "Isabella",
         "email": "isabella@example.com",
-        "value": 1,
+        "value": 5,
         "linkWith": [
-            "Ava",
-            "Amelia",
-            "Arthur",
-            "Freddie",
-            "Charlie",
             "Theo",
-            "Olivia",
-            "Harry"
+            "Leo"
         ]
     },
     {
         "name": "Isla",
         "email": "isla@example.com",
-        "value": 5,
+        "value": 6,
         "linkWith": [
-            "Mia",
-            "Leo",
-            "Oscar",
+            "Isabella",
+            "Ava",
             "Noah",
-            "Leo",
-            "Grace",
+            "Oliver",
+            "George",
             "Charlie",
-            "Sophia"
+            "Mia"
         ]
     },
     {
         "name": "Leo",
         "email": "leo@example.com",
-        "value": 6,
+        "value": 4,
         "linkWith": [
-            "Oscar",
-            "Ava",
-            "Charlie",
-            "Charlie",
+            "Grace",
+            "Amelia",
+            "Mia",
+            "Olivia",
             "Arthur",
-            "Arthur"
+            "George",
+            "Oliver"
         ]
     },
     {
         "name": "Mia",
         "email": "mia@example.com",
-        "value": 4,
+        "value": 5,
         "linkWith": [
-            "Freddie",
-            "Isla",
             "Grace",
-            "Harry"
+            "Noah",
+            "Freddie",
+            "Arthur",
+            "Charlie",
+            "Sophia"
         ]
     },
     {
         "name": "Noah",
         "email": "noah@example.com",
-        "value": 5,
+        "value": 6,
         "linkWith": [
-            "Noah",
+            "Charlie",
+            "Amelia",
             "Oliver"
         ]
     },
     {
         "name": "Oliver",
         "email": "oliver@example.com",
-        "value": 3,
+        "value": 6,
         "linkWith": [
-            "Olivia",
-            "Arthur"
+            "Theo",
+            "Harry",
+            "Ava"
         ]
     },
     {
         "name": "Olivia",
         "email": "olivia@example.com",
-        "value": 5,
+        "value": 4,
         "linkWith": [
-            "Arthur",
-            "Olivia",
-            "Oliver",
-            "Amelia",
-            "Oscar",
-            "Harry",
-            "Oscar",
             "Isla",
-            "Ava"
+            "Charlie",
+            "Arthur",
+            "Oscar",
+            "Grace"
         ]
     },
     {
         "name": "Oscar",
         "email": "oscar@example.com",
-        "value": 6,
+        "value": 4,
         "linkWith": [
-            "Arthur",
-            "Amelia",
-            "Isla"
+            "Harry",
+            "George",
+            "Ava"
         ]
     },
     {
         "name": "Sophia",
         "email": "sophia@example.com",
-        "value": 4,
+        "value": 2,
         "linkWith": [
-            "Sophia",
-            "Noah",
-            "Sophia",
-            "Ava",
-            "Amelia",
-            "Amelia",
-            "Ava"
+            "Leo",
+            "Charlie",
+            "Freddie",
+            "Olivia",
+            "Harry"
         ]
     },
     {
         "name": "Theo",
         "email": "theo@example.com",
-        "value": 4,
+        "value": 3,
         "linkWith": [
-            "Sophia",
-            "Leo",
-            "Grace",
-            "Theo",
-            "Amelia",
-            "Theo",
-            "Harry",
-            "Amelia",
-            "Harry"
+            "Oscar",
+            "Noah",
+            "Isla",
+            "Oliver",
+            "George"
         ]
     }
 ]

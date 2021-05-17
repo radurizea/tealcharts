@@ -37,6 +37,163 @@
     <body>
         <!-- Chart code -->
         <script>
+            var localData = [
+                {
+                    name: 'Amelia',
+                    email: 'amelia@example.com',
+                    value: 3,
+                    linkWith: [
+                        'Leo',
+                        'George',
+                        'Theo',
+                        'Grace',
+                        'Oliver',
+                        'Isabella',
+                        'Sophia',
+                    ],
+                },
+                {
+                    name: 'Arthur',
+                    email: 'arthur@example.com',
+                    value: 4,
+                    linkWith: ['Freddie', 'Grace', 'Oliver', 'Noah'],
+                },
+                {
+                    name: 'Ava',
+                    email: 'ava@example.com',
+                    value: 5,
+                    linkWith: ['Charlie', 'Olivia', 'Amelia', 'Oscar'],
+                },
+                {
+                    name: 'Charlie',
+                    email: 'charlie@example.com',
+                    value: 7,
+                    linkWith: ['Isla', 'Noah'],
+                },
+                {
+                    name: 'Freddie',
+                    email: 'freddie@example.com',
+                    value: 4,
+                    linkWith: ['Olivia', 'Isla', 'Ava'],
+                },
+                {
+                    name: 'George',
+                    email: 'george@example.com',
+                    value: 7,
+                    linkWith: ['Harry', 'Isabella', 'Arthur', 'Mia', 'Freddie'],
+                },
+                {
+                    name: 'Grace',
+                    email: 'grace@example.com',
+                    value: 5,
+                    linkWith: [
+                        'Mia',
+                        'Charlie',
+                        'Isabella',
+                        'Harry',
+                        'George',
+                        'Ava',
+                        'Isla',
+                    ],
+                },
+                {
+                    name: 'Harry',
+                    email: 'harry@example.com',
+                    value: 5,
+                    linkWith: [
+                        'Isla',
+                        'Isabella',
+                        'Oscar',
+                        'George',
+                        'Leo',
+                        'Mia',
+                        'Noah',
+                    ],
+                },
+                {
+                    name: 'Isabella',
+                    email: 'isabella@example.com',
+                    value: 5,
+                    linkWith: ['Theo', 'Leo'],
+                },
+                {
+                    name: 'Isla',
+                    email: 'isla@example.com',
+                    value: 6,
+                    linkWith: [
+                        'Isabella',
+                        'Ava',
+                        'Noah',
+                        'Oliver',
+                        'George',
+                        'Charlie',
+                        'Mia',
+                    ],
+                },
+                {
+                    name: 'Leo',
+                    email: 'leo@example.com',
+                    value: 4,
+                    linkWith: [
+                        'Grace',
+                        'Amelia',
+                        'Mia',
+                        'Olivia',
+                        'Arthur',
+                        'George',
+                        'Oliver',
+                    ],
+                },
+                {
+                    name: 'Mia',
+                    email: 'mia@example.com',
+                    value: 5,
+                    linkWith: [
+                        'Grace',
+                        'Noah',
+                        'Freddie',
+                        'Arthur',
+                        'Charlie',
+                        'Sophia',
+                    ],
+                },
+                {
+                    name: 'Noah',
+                    email: 'noah@example.com',
+                    value: 6,
+                    linkWith: ['Charlie', 'Amelia', 'Oliver'],
+                },
+                {
+                    name: 'Oliver',
+                    email: 'oliver@example.com',
+                    value: 6,
+                    linkWith: ['Theo', 'Harry', 'Ava'],
+                },
+                {
+                    name: 'Olivia',
+                    email: 'olivia@example.com',
+                    value: 4,
+                    linkWith: ['Isla', 'Charlie', 'Arthur', 'Oscar', 'Grace'],
+                },
+                {
+                    name: 'Oscar',
+                    email: 'oscar@example.com',
+                    value: 4,
+                    linkWith: ['Harry', 'George', 'Ava'],
+                },
+                {
+                    name: 'Sophia',
+                    email: 'sophia@example.com',
+                    value: 2,
+                    linkWith: ['Leo', 'Charlie', 'Freddie', 'Olivia', 'Harry'],
+                },
+                {
+                    name: 'Theo',
+                    email: 'theo@example.com',
+                    value: 3,
+                    linkWith: ['Oscar', 'Noah', 'Isla', 'Oliver', 'George'],
+                },
+            ];
             var chart;
             var networkSeries;
             var users = [];
@@ -84,19 +241,19 @@
                 });
             });
 
-            users.forEach(function (user, index) {
-                // sections.forEach(function(section, sectionIndex) {
+            // users.forEach(function (user, index) {
+            //     // sections.forEach(function(section, sectionIndex) {
 
-                var links = linkWith(index, users);
+            //     var links = linkWith(index, users);
 
-                data.push({
-                    name: user.name,
-                    email: user.email,
-                    value: links.length,
-                    linkWith: links,
-                });
-                // });
-            });
+            //     data.push({
+            //         name: user.name,
+            //         email: user.email,
+            //         value: links.length,
+            //         linkWith: links,
+            //     });
+            //     // });
+            // });
 
             sections.forEach(function (section, sectionIndex) {
                 users.forEach(function (user, index) {
@@ -120,7 +277,6 @@
                 });
             });
 
-
             function linkWith(index, users) {
                 var numberOfConnections = Math.floor(Math.random() * 10) + 1;
                 var linkWith = [];
@@ -129,15 +285,19 @@
                     var randomConnection = Math.floor(
                         Math.random() * users.length
                     );
-                    linkWith.push(users[randomConnection].name);
+
+                    if (
+                        !linkWith.includes(users[randomConnection].name) &&
+                        randomConnection !== index
+                    ) {
+                        linkWith.push(users[randomConnection].name);
+                    }
                 }
 
                 return linkWith;
             }
 
-
             selectedSections = sections.slice();
-
 
             function drawChart(chart, networkSeries) {
                 chart = am4core.create(
@@ -187,6 +347,8 @@
                                 dataItem.dataContext.name
                             )
                         ) {
+                            // console.log(node.dataItem.dataContext);
+                            // console.log(node.dataItem.childLinks);
                             node.dataItem.childLinks.each(function (link) {
                                 if (
                                     link.dataItem.dataContext.name ===
@@ -197,6 +359,24 @@
                                     link.setState('invisible');
                                 }
                             });
+
+                            if (
+                                dataItem.dataContext.linkWith.includes(
+                                    node.dataItem.dataContext.name
+                                )
+                            ) {
+                                // console.log(node.dataItem.dataContext.name);
+                                // console.log(dataItem.childLinks);
+                                dataItem.childLinks.each(function (link) {
+                                    // console.log({linkName: link.dataItem.dataContext.name, nodeName: node.dataItem.dataContext.name});
+                                    if (
+                                        link.dataItem.dataContext.name ===
+                                        node.dataItem.dataContext.name
+                                    ) {
+                                        link.isHover = true;
+                                    }
+                                });
+                            }
                         } else {
                             node.dataItem.childLinks.each(function (link) {
                                 link.setState('invisible');
@@ -212,7 +392,8 @@
                     });
                 });
 
-                networkSeries.data = sections[0].answers;
+                // networkSeries.data = sections[0].answers;
+                networkSeries.data = localData;
             }
 
             am4core.ready(function () {
@@ -221,67 +402,70 @@
                 // Themes end
 
                 drawChart(chart, networkSeries);
-                
-                
             }); // end am4core.ready()
 
             function toggleSection(e) {
-
                 var checked = e.target.checked;
                 var sectionName = e.target.name;
-                var sectionIndex = selectedSections.findIndex(function(section) {
+                var sectionIndex = selectedSections.findIndex(function (
+                    section
+                ) {
                     return section.name === sectionName;
                 });
 
                 if (!checked && sectionIndex >= 0) {
                     selectedSections.splice(sectionIndex, 1);
                 } else if (checked && sectionIndex < 0) {
-                    selectedSections.push(sections.find(function(section){
-                        return section.name == e.target.name;
-                    }))
-                }        
+                    selectedSections.push(
+                        sections.find(function (section) {
+                            return section.name == e.target.name;
+                        })
+                    );
+                }
             }
 
             function chartData() {
                 var data = [];
 
-                users.forEach(function(user) {
+                users.forEach(function (user) {
                     var userData = {
                         name: user.name,
                         email: user.email,
                         value: 0,
-                        linkWith: []
+                        linkWith: [],
                     };
 
-                    selectedSections.forEach(function(section){
-                        section.answers.forEach(function(answer){
+                    selectedSections.forEach(function (section) {
+                        section.answers.forEach(function (answer) {
                             if (answer.name == user.name) {
-                                userData.linkWith = userData.linkWith.concat(answer.linkWith);
-                                userData.linkWith = userData.linkWith.filter(onlyUnique);
+                                userData.linkWith = userData.linkWith.concat(
+                                    answer.linkWith
+                                );
+                                userData.linkWith =
+                                    userData.linkWith.filter(onlyUnique);
                                 userData.value = userData.linkWith.length;
                             }
                         });
                     });
 
                     data.push(userData);
-
                 });
 
                 return data;
-
             }
 
+            console.log(sections);
+            // console.log(chartData());
 
             function onlyUnique(value, index, self) {
                 return self.indexOf(value) === index;
             }
-            
         </script>
 
         <!-- HTML -->
         <div class="container">
             <div id="chartdiv"></div>
-            <div id="toggleSections" style="display: none;">
+            <div id="toggleSections">
                 <p>
                     <label for="charity">
                         <input
