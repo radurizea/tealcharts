@@ -222,6 +222,14 @@
                 'Theo',
             ];
 
+            departments = [
+                'department1',
+                'department2',
+                'department3'
+            ];
+
+            var selectedDepartments = departments.slice();
+
             var sections = [
                 { name: 'Charity', answers: [] },
                 { name: 'Loyalty', answers: [] },
@@ -238,8 +246,11 @@
                 users.push({
                     name: name,
                     email: name.toLowerCase() + '@example.com',
+                    department: departments[ Math.floor(Math.random() * 3)]
                 });
             });
+
+            // console.log(users);
 
             // users.forEach(function (user, index) {
             //     // sections.forEach(function(section, sectionIndex) {
@@ -263,6 +274,7 @@
                         email: user.email,
                         value: 0,
                         linkWith: links,
+                        department: user.department
                     });
                 });
             });
@@ -299,7 +311,7 @@
 
             selectedSections = sections.slice();
 
-            function drawChart(chart, networkSeries) {
+            function drawChart() {
                 chart = am4core.create(
                     'chartdiv',
                     am4plugins_forceDirected.ForceDirectedTree
@@ -342,64 +354,90 @@
 
                 nodeTemplate.events.on('over', function (event) {
                     var dataItem = event.target.dataItem;
+
                     networkSeries.nodes.each(function (node) {
-                        var nodeIndex = node.dataItem.dataContext.linkWith.indexOf(dataItem.dataContext.name);
-                        if (
-                           nodeIndex >= 0
-                        ) {
+
+                        var nodeIndex = node.dataItem.linkWith.indexOf(dataItem.dataContext.name);
+                        var mutualLink = dataItem.linkWith.includes(node.dataItem.dataContext.name);
+
+                        if (nodeIndex >= 0) {
+                            
                             node.dataItem.childLinks.each(function (link) {
                                 if (
                                     link.dataItem.dataContext.name ===
                                     dataItem.dataContext.name
                                 ) {
-                                    link.setState('visible');
-                                    link.strokeWidth = 11 - nodeIndex;
+
+                                    link.strokeOpacity = 1;
+                                    if (mutualLink) {
+                                        link.strokeWidth = 10;
+                                    } else {
+                                        link.strokeWidth = 5;
+                                    }
+
                                 } else {
-                                    link.setState('invisible');
+                                    link.strokeOpacity = 0;
                                 }
                             });
 
-                            if (
-                                dataItem.dataContext.linkWith.includes(
-                                    node.dataItem.dataContext.name
-                                )
-                            ) {
+                            if (mutualLink) {
                                 dataItem.childLinks.each(function (link) {
                                     if (
                                         link.dataItem.dataContext.name ===
                                         node.dataItem.dataContext.name
                                     ) {
-                                        link.setState('visible');
-                                        link.strokeWidth = 11 - nodeIndex;
+                                        link.strokeOpacity = 1;
+                                        link.strokeWidth = 10;
                                     }
                                 });
                             }
+                            
                         } else {
                             node.dataItem.childLinks.each(function (link) {
-                                link.setState('invisible');
+                                link.strokeOpacity = 0;
                             });
                         }
                     });
+
                 });
 
                 nodeTemplate.events.on('out', function (event) {
                     networkSeries.links.each(function (link) {
                         link.isHover = false;
-                        link.setState('visible');
+                        link.strokeOpacity = 1;
                         link.strokeWidth = 1;
                     });
                 });
 
+                nodeTemplate.adapter.add('fill', function(color, target){
+                    if (target.dataItem && target.dataItem.dataContext) {
+                        switch (target.dataItem.dataContext.department) {
+                            case 'department1':
+                                return am4core.color('#845EC2');
+                                break;
+                            case 'department2':
+                                return am4core.color('#D65DB1');
+                                break;
+                            case 'department3':
+                                return am4core.color('#FFC75F');
+                                break;
+                        }
+                    }
+                    return am4core.color('red');
+                });
+
                 // networkSeries.data = sections[0].answers;
-                networkSeries.data = localData;
+                networkSeries.data = chartData();
             }
 
             am4core.ready(function () {
+                am4core.options.autoDispose = true;
                 // Themes begin
                 am4core.useTheme(am4themes_animated);
                 // Themes end
 
-                drawChart(chart, networkSeries);
+                drawChart();
+                // console.log({chart: chart});
             }); // end am4core.ready()
 
             function toggleSection(e) {
@@ -420,6 +458,28 @@
                         })
                     );
                 }
+
+                networkSeries.data = chartData();
+                // console.log(chartData());
+                
+            }
+
+            function toggleDepartment(e
+            ) {
+                var checked = e.target.checked;
+                var departmentName = e.target.name;
+                var depIndex = selectedDepartments.findIndex(function(department){
+                    return department === departmentName
+                });
+
+                if (!checked && depIndex >= 0) {
+                    selectedDepartments.splice(depIndex, 1);
+                } else if (checked && depIndex < 0) {
+                    selectedDepartments.push(departmentName);
+                }
+
+                networkSeries.data = chartData();
+
             }
 
             function chartData() {
@@ -429,6 +489,7 @@
                     var userData = {
                         name: user.name,
                         email: user.email,
+                        department: user.department,
                         value: 0,
                         linkWith: [],
                     };
@@ -441,7 +502,7 @@
                                 );
                                 userData.linkWith =
                                     userData.linkWith.filter(onlyUnique);
-                                userData.value = userData.linkWith.length;
+                                // userData.value = userData.linkWith.length;
                             }
                         });
                     });
@@ -449,11 +510,24 @@
                     data.push(userData);
                 });
 
+                data.forEach(function(user){
+                    user.value = data.reduce(function(acc, curr) {
+                        if (curr.linkWith.includes(user.name)) {
+                            acc++;
+                        }
+                        return acc;
+                    }, 0);
+                });
+
+                data = data.filter(function(user) {
+                    return selectedDepartments.includes(user.department);
+                });
+
                 return data;
             }
 
-            console.log(sections);
-            // console.log(chartData());
+            // console.log(sections);
+            // console.log(selectedDepartments);
 
             function onlyUnique(value, index, self) {
                 return self.indexOf(value) === index;
@@ -570,6 +644,45 @@
                             onclick="toggleSection(event)"
                         />
                         Wisdom
+                    </label>
+                </p>
+           
+                <hr />
+
+                <p>
+                    <label for="department1">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="department1"
+                            id="department1"
+                            onclick="toggleDepartment(event)"
+                        />
+                        Department 1
+                    </label>
+                </p>
+                <p>
+                    <label for="department2">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="department2"
+                            id="department2"
+                            onclick="toggleDepartment(event)"
+                        />
+                        Department 2
+                    </label>
+                </p>
+                <p>
+                    <label for="department3">
+                        <input
+                            type="checkbox"
+                            checked
+                            name="department3"
+                            id="department3"
+                            onclick="toggleDepartment(event)"
+                        />
+                        Department 3
                     </label>
                 </p>
             </div>
